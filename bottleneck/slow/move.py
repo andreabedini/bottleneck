@@ -61,8 +61,6 @@ def move_func(func, arr, window, min_count=-1, axis=-1, **kwargs):
     elif min_count > window:
         msg = "min_count (%d) cannot be greater than window (%d)"
         raise ValueError(msg % (min_count, window))
-    elif min_count == 0:
-        raise ValueError("`min_count` cannot be zero")
     if issubclass(arr.dtype.type, np.inexact):
         y = np.empty_like(arr)
     else:

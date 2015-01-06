@@ -81,16 +81,17 @@ cdef ndarray move_sum_DTYPE0(ndarray a, int window, int min_count, int axis,
     cdef ndarray y = PyArray_EMPTY(a_ndim, y_dims, NPY_DTYPE0, 0)
     cdef np.flatiter ity = PyArray_IterAllButAxis(y, &axis)
     cdef Py_ssize_t ystride = y.strides[axis]
+    cdef int min_minus = max(0, min_count - 1)
     while PyArray_ITER_NOTDONE(ita):
         asum = 0
         count = 0
-        for i in range(min_count - 1):
+        for i in range(min_minus):
             ai = (<DTYPE0_t*>((<char*>pid(ita)) + i*stride))[0]
             if ai == ai:
                 asum += ai
                 count += 1
             (<DTYPE0_t*>((<char*>pid(ity)) + i*ystride))[0] = NAN
-        for i in range(min_count - 1, window):
+        for i in range(min_minus, window):
             ai = (<DTYPE0_t*>((<char*>pid(ita)) + i*stride))[0]
             if ai == ai:
                 asum += ai
@@ -130,13 +131,14 @@ cdef ndarray move_sum_DTYPE0(ndarray a, int window, int min_count, int axis,
     cdef ndarray y = PyArray_EMPTY(a_ndim, y_dims, NPY_DTYPE1, 0)
     cdef np.flatiter ity = PyArray_IterAllButAxis(y, &axis)
     cdef Py_ssize_t ystride = y.strides[axis]
+    cdef int min_minus = max(0, min_count - 1)
     while PyArray_ITER_NOTDONE(ita):
         asum = 0
-        for i in range(min_count - 1):
+        for i in range(min_minus):
             ai = (<DTYPE0_t*>((<char*>pid(ita)) + i*stride))[0]
             asum += ai
             (<DTYPE1_t*>((<char*>pid(ity)) + i*ystride))[0] = NAN
-        for i in range(min_count - 1, window):
+        for i in range(min_minus, window):
             ai = (<DTYPE0_t*>((<char*>pid(ita)) + i*stride))[0]
             asum += ai
             yi = <DTYPE1_t>asum
@@ -177,16 +179,17 @@ cdef ndarray move_mean_DTYPE0(ndarray a, int window, int min_count, int axis,
     cdef ndarray y = PyArray_EMPTY(a_ndim, y_dims, NPY_DTYPE0, 0)
     cdef np.flatiter ity = PyArray_IterAllButAxis(y, &axis)
     cdef Py_ssize_t ystride = y.strides[axis]
+    cdef int min_minus = max(0, min_count - 1)
     while PyArray_ITER_NOTDONE(ita):
         asum = 0
         count = 0
-        for i in range(min_count - 1):
+        for i in range(min_minus):
             ai = (<DTYPE0_t*>((<char*>pid(ita)) + i*stride))[0]
             if ai == ai:
                 asum += ai
                 count += 1
             (<DTYPE0_t*>((<char*>pid(ity)) + i*ystride))[0] = NAN
-        for i in range(min_count - 1, window):
+        for i in range(min_minus, window):
             ai = (<DTYPE0_t*>((<char*>pid(ita)) + i*stride))[0]
             if ai == ai:
                 asum += ai
@@ -227,13 +230,14 @@ cdef ndarray move_mean_DTYPE0(ndarray a, int window, int min_count, int axis,
     cdef ndarray y = PyArray_EMPTY(a_ndim, y_dims, NPY_DTYPE1, 0)
     cdef np.flatiter ity = PyArray_IterAllButAxis(y, &axis)
     cdef Py_ssize_t ystride = y.strides[axis]
+    cdef int min_minus = max(0, min_count - 1)
     while PyArray_ITER_NOTDONE(ita):
         asum = 0
-        for i in range(min_count - 1):
+        for i in range(min_minus):
             ai = (<DTYPE0_t*>((<char*>pid(ita)) + i*stride))[0]
             asum += ai
             (<DTYPE1_t*>((<char*>pid(ity)) + i*ystride))[0] = NAN
-        for i in range(min_count - 1, window):
+        for i in range(min_minus, window):
             ai = (<DTYPE0_t*>((<char*>pid(ita)) + i*stride))[0]
             asum += ai
             yi = asum / (i + 1)
@@ -275,18 +279,19 @@ cdef ndarray move_std_DTYPE0(ndarray a, int window, int min_count, int axis,
     cdef ndarray y = PyArray_EMPTY(a_ndim, y_dims, NPY_DTYPE0, 0)
     cdef np.flatiter ity = PyArray_IterAllButAxis(y, &axis)
     cdef Py_ssize_t ystride = y.strides[axis]
+    cdef int min_minus = max(0, min_count - 1)
     while PyArray_ITER_NOTDONE(ita):
         asum = 0
         a2sum = 0
         count = 0
-        for i in range(min_count - 1):
+        for i in range(min_minus):
             ai = (<DTYPE0_t*>((<char*>pid(ita)) + i*stride))[0]
             if ai == ai:
                 asum += ai
                 a2sum += ai * ai
                 count += 1
             (<DTYPE0_t*>((<char*>pid(ity)) + i*ystride))[0] = NAN
-        for i in range(min_count - 1, window):
+        for i in range(min_minus, window):
             ai = (<DTYPE0_t*>((<char*>pid(ita)) + i*stride))[0]
             if ai == ai:
                 asum += ai
@@ -340,15 +345,16 @@ cdef ndarray move_std_DTYPE0(ndarray a, int window, int min_count, int axis,
     cdef np.flatiter ity = PyArray_IterAllButAxis(y, &axis)
     cdef Py_ssize_t ystride = y.strides[axis]
     winddof = window - ddof
+    cdef int min_minus = max(0, min_count - 1)
     while PyArray_ITER_NOTDONE(ita):
         asum = 0
         a2sum = 0
-        for i in range(min_count - 1):
+        for i in range(min_minus):
             ai = (<DTYPE0_t*>((<char*>pid(ita)) + i*stride))[0]
             asum += ai
             a2sum += ai * ai
             (<DTYPE1_t*>((<char*>pid(ity)) + i*ystride))[0] = NAN
-        for i in range(min_count - 1, window):
+        for i in range(min_minus, window):
             ai = (<DTYPE0_t*>((<char*>pid(ita)) + i*stride))[0]
             asum += ai
             a2sum += ai * ai
@@ -795,8 +801,6 @@ cdef ndarray mover(arr, int window, int min_count, int axis,
     elif min_count > window:
         msg = "min_count (%d) cannot be greater than window (%d)"
         raise ValueError(msg % (min_count, window))
-    elif min_count == 0:
-        raise ValueError("`min_count` cannot be zero")
 
     if dtype == NPY_float64:
         y = move_float64(a, window, min_count, axis, ita, stride, length,

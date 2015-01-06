@@ -49,6 +49,7 @@ def unit_maker(func, func0, decimal=np.inf, nans=True):
             for window in windows:
                 min_counts = [w for w in windows if w <= window]
                 min_counts.append(-1)
+                min_counts.append(0)
                 for min_count in min_counts:
                     with np.errstate(invalid='ignore'):
                         with warnings.catch_warnings():
