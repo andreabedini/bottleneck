@@ -18,6 +18,9 @@ from numpy cimport PyArray_IterAllButAxis
 from numpy cimport PyArray_TYPE
 from numpy cimport PyArray_NDIM
 
+from numpy cimport PyArray_EMPTY
+from numpy cimport PyArray_Copy
+
 from numpy cimport ndarray
 from numpy cimport import_array
 import_array()
@@ -128,6 +131,56 @@ cdef ndarray replace_DTYPE0(ndarray a, np.flatiter ita,
                     (<DTYPE0_t*>((<char*>pid(ita)) + i * stride))[0] = newint
             PyArray_ITER_NEXT(ita)
     return a
+
+
+# exp_approx ----------------------------------------------------------------
+
+def exp_approx(arr):
+    try:
+        return nonreducer(arr,
+                          exp_approx_float64,
+                          exp_approx_float32,
+                          exp_approx_int64,
+                          exp_approx_int32,
+                          0.0,
+                          0.0,
+                          0)
+    except TypeError:
+        return slow.exp_approx(arr)
+
+
+cdef ndarray exp_approx_DTYPE0(ndarray a, np.flatiter ita,
+                               Py_ssize_t stride, Py_ssize_t length,
+                               int a_ndim, np.npy_intp* y_dims,
+                               double old, double new):
+    # bn.dtypes = [['float64', 'float64'], ['float32', 'float32'], ['int64', 'float64'], ['int32', 'float64']]
+    cdef Py_ssize_t i
+    cdef int axis = -1
+    cdef DTYPE1_t x
+    cdef ndarray y = PyArray_EMPTY(a_ndim, y_dims, NPY_DTYPE1, 0)
+    cdef np.flatiter ity = PyArray_IterAllButAxis(y, &axis)
+    cdef Py_ssize_t ystride = y.strides[axis]
+    while PyArray_ITER_NOTDONE(ita):
+        for i in range(length):
+            x = (<DTYPE0_t*>((<char*>pid(ita)) + i * stride))[0]
+            if x > -1024:
+                x = 1 + x / 1024
+                x *= x
+                x *= x
+                x *= x
+                x *= x
+                x *= x
+                x *= x
+                x *= x
+                x *= x
+                x *= x
+                x *= x
+            else:
+                x = 0
+            (<DTYPE1_t*>((<char*>pid(ity)) + i * ystride))[0] = x
+        PyArray_ITER_NEXT(ita)
+        PyArray_ITER_NEXT(ity)
+    return y
 
 
 # nonreduce_axis ------------------------------------------------------------

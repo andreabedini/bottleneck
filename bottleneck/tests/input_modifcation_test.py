@@ -74,6 +74,7 @@ def test_modification():
              bn.nanargmax,
              bn.anynan,
              bn.allnan,
+             bn.exp_approx,
              bn.partsort,
              bn.argpartsort,
              bn.rankdata,

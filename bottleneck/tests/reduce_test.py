@@ -83,6 +83,8 @@ def unit_maker(func, func0, decimal=np.inf, nans=True, check_dtype=True):
                 except:
                     desiredraised = True
             if actualraised and desiredraised:
+                if func.__name__ == 'exp_approx':
+                    import ipdb; ipdb.set_trace()
                 pass
             else:
                 tup = (func.__name__, 'a'+str(i), str(arr.dtype),

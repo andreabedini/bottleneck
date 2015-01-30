@@ -81,12 +81,11 @@ def timer(statements, setups):
 
 
 def getarray(shape, dtype, nans=False):
-    arr = np.arange(np.prod(shape), dtype=dtype)
+    rs = np.random.RandomState(shape)
+    arr = rs.randn(np.prod(shape)).astype(dtype=dtype)
     if nans and issubclass(arr.dtype.type, np.inexact):
         arr[::3] = np.nan
-    else:
-        rs = np.random.RandomState(shape)
-        rs.shuffle(arr)
+    rs.shuffle(arr)
     return arr.reshape(*shape)
 
 
@@ -120,7 +119,7 @@ def benchsuite(shapes, dtype, axis, nans):
             if "%s" == "rankdata": sl_func([1, 2, 3])
         """ % (func, func, func, func)
         run['setups'] = getsetups(setup, shapes, nans)
-        suite.append(run)
+        #suite.append(run)
 
     # partsort, argpartsort
     funcs = ['partsort', 'argpartsort']
@@ -144,10 +143,22 @@ def benchsuite(shapes, dtype, axis, nans):
     run = {}
     run['name'] = "replace"
     run['statements'] = ["bn_func(a, np.nan, 0)",
-                         "slow_func(a, np.nan, 0)"]
+                         "sl_func(a, np.nan, 0)"]
     setup = """
         from bottleneck import replace as bn_func
-        from bottleneck.slow import replace as slow_func
+        from bottleneck.slow import replace as sl_func
+    """
+    run['setups'] = getsetups(setup, shapes, nans)
+    suite.append(run)
+
+    # exp_approx
+    run = {}
+    run['name'] = "exp_approx"
+    run['statements'] = ["bn_func(a)",
+                         "sl_func(a)"]
+    setup = """
+        from bottleneck import exp_approx as bn_func
+        from numpy import exp as sl_func
     """
     run['setups'] = getsetups(setup, shapes, nans)
     suite.append(run)

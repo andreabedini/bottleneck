@@ -52,6 +52,7 @@ Bottleneck comes with a benchmark suite::
         partsort        6.4        0.9        6.5        1.1
         argpartsort     3.3        0.7        3.3        0.5
         replace         9.9        1.2        9.9        1.2
+        exp_approx      1.6        5.1        1.5        3.9
         move_sum      276.1      121.1      283.2      330.9
         move_mean     714.4       95.7      723.7      415.8
         move_std     1102.5       56.2     1160.7      749.0
